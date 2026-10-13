@@ -54,7 +54,7 @@ description: 蒸馏工艺：将书籍、单集或系列视频、创作者作品�
 
 1. **选一路**：读取上表命中的首读资料；严格深读、读者版、导读三者互斥。本次普通书效率默认已经成立，无需逐书重新申请；明确档位与用户最新指令优先；取消审核立即停止，不以旧契约要求继续。
 2. **选当前阶段**：先定位相关标题/字段，再读对应段；长文不整份灌入。各阶段条件导航见 [reference-map.md](references/reference-map.md)，只在查找资源时打开。
-3. **复用与停止**：相同来源、正文和依赖版本的有效证据直接复用。获授权的一轮审核后只修实质错误并复核变化；普通制作不因“可以更好”升级审查。预算未知不编数字，成本记录和批量调度仅在需要时读 [book-batch-operations.md](references/book-batch-operations.md)。
+3. **复用与停止**：相同来源、正文和依赖版本的有效证据直接复用。获授权的一轮审核后只修实质错误并复核变化；普通制作不因“可以更好”升级审查。预算未知不编数字，成本记录和批量调度仅在需要时读 [book-batch-operations.md](references/book-batch-operations.md)。用户要求逐书复盘、持续改进或复盘后更新 Skill 时，执行该文件 §8：用真实问题决定改进，并在后一本验证；不自动增加内容审阅。
 4. **附加规则按条件加载**：心理学科学支持另读 [enrich.md](references/enrich.md) §1.1 和 [source-audit.md](references/source-audit.md)，读者版再读其 §3/§5；替换正式旧书读 [redistillation.md](references/redistillation.md)；仍有知识分母的管理流水线要提效才读 [efficient-book-distillation.md](references/efficient-book-distillation.md)。
 5. **到消费者才验收**：只有制作页面才加载 HTML/设计/品牌参考；只有批量页面交付才跑批量验收。只交资料不强制造 HTML、10 份网站 JSON 或推广文章。实现尚不支持目标格式时做明确适配并验证，不伪造旧契约回执。
 
