@@ -159,7 +159,7 @@ strict与reader分别报告。reader按来源有效范围与实际章节装配�
 
 在 distill.json 顶层显式写 `quality_profile: "reader"`，按本轮实际模式保存制作或审阅记录。运行原页面入口：`python3 "$SKILL/scripts/verify_page.py" <页面.html> --distill <distill.json> --source <book.txt> --reader-review <记录.json>`；心理学项目仍加 `--require-domain psychology`。参数名是历史接口，不表示已实施内容审核；未传时读取 distill.json 同目录的 `reader-review.json`；`--skip-interact` 也不跳过记录校验。
 
-**普通制作**使用 `reader-production-v1`，制作记录的实际字段以 `scripts/verify_reader_review.py` 的生产分支为准：记录当前输入及章节哈希、来源范围、真实装配证据和本轮制作依据，`content_review_performed:false`；不填章节 `fidelity` 或 `coverage`。兼容字段中的人员、时间与证据按实际制作填写，不写成已审阅。若运行版本专门要求用户取消审核的指令，只有真实指令才能填写，不能制造授权来适配旧接口。
+**普通制作**使用 `reader-production-v1`，制作记录的实际字段以 `scripts/verify_reader_review.py` 的生产分支为准：记录当前输入及章节哈希、来源范围、真实装配证据和本轮制作依据，`content_review_performed:false`；不填章节 `fidelity` 或 `coverage`。兼容字段中的人员、时间与证据按实际制作填写，不写成已审阅。默认制作依据写 `production_basis: {"kind":"skill_default","policy":"sansheng-distill/production-only-v1","note":"本轮实际制作和功能检查范围"}`；`user_no_content_review` 只用于确有该指令的兼容记录。项目若锁定旧校验器，须同步已验证的核心版本，不能伪造取消审核授权来适配旧接口。
 
 **另获授权的内容审阅**才使用下列审阅收据；由 `scripts/verify_reader_review.py` 验证，不自动生成签署：
 

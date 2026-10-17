@@ -108,6 +108,47 @@ def test_explicit_no_content_review_production(tmp_path):
     assert validate_reader_review(distill, source, review) == []
 
 
+def default_production_package(tmp_path):
+    distill, source, review, data, receipt = production_package(tmp_path)
+    del receipt['user_no_content_review']
+    receipt['production_basis'] = {'kind': 'skill_default',
+                                   'policy': 'sansheng-distill/production-only-v1',
+                                   'note': '只核来源、正文装配与页面，不声明内容已审阅。'}
+    review.write_text(json.dumps(receipt), encoding='utf-8')
+    return distill, source, review, data, receipt
+
+
+def test_default_production_requires_no_invented_user_instruction(tmp_path):
+    distill, source, review, _, _ = default_production_package(tmp_path)
+    assert validate_reader_review(distill, source, review) == []
+
+
+@pytest.mark.parametrize('mutation', ['empty_basis', 'wrong_policy', 'empty_note',
+                                     'fake_review', 'stale_hash', 'empty_source', 'empty_body'])
+def test_default_basis_does_not_bypass_evidence(tmp_path, mutation):
+    distill, source, review, data, receipt = default_production_package(tmp_path)
+    if mutation == 'empty_basis':
+        receipt['production_basis'] = {}
+    elif mutation == 'wrong_policy':
+        receipt['production_basis']['policy'] = 'skip-all-checks'
+    elif mutation == 'empty_note':
+        receipt['production_basis']['note'] = ' '
+    elif mutation == 'fake_review':
+        receipt['chapters'][0]['fidelity'] = 'reviewed'
+    elif mutation == 'stale_hash':
+        distill.write_text(distill.read_text() + '\n')
+    elif mutation == 'empty_source':
+        source.write_text('')
+        receipt['source_sha256'] = sha256(source.read_bytes())
+    elif mutation == 'empty_body':
+        data['chapters'][0]['narrative'] = ''
+        distill.write_text(json.dumps(data))
+        receipt['distill_sha256'] = sha256(distill.read_bytes())
+        receipt['chapters'][0]['narrative_sha256'] = sha256(b'')
+    review.write_text(json.dumps(receipt))
+    assert validate_reader_review(distill, source, review)
+
+
 @pytest.mark.parametrize('mutation', ['no_user_instruction', 'fake_review', 'missing_unit',
                                      'false_source_range', 'stale_hash', 'empty_source', 'empty_body'])
 def test_production_rejects_missing_or_fabricated_evidence(tmp_path, mutation):

@@ -106,8 +106,18 @@ def validate_reader_review(distill_path, source_path, receipt_path):
             errors.append("[reader] 生产交付不得冒称内容已审阅")
         if receipt.get("book_facts") != "accept_as_source":
             errors.append("[reader] 生产交付必须直接接受原书事实")
-        if not isinstance(receipt.get("user_no_content_review"), str) or not receipt["user_no_content_review"].strip():
-            errors.append("[reader] 生产交付必须记录用户明确取消内容审核的指令")
+        # Ordinary production is now the Skill default. Older receipts may keep
+        # an actual user instruction; do not make callers invent one to deliver.
+        basis = receipt.get("production_basis")
+        if basis is not None:
+            if (not isinstance(basis, dict)
+                    or set(basis) != {"kind", "policy", "note"}
+                    or basis.get("kind") != "skill_default"
+                    or basis.get("policy") != "sansheng-distill/production-only-v1"
+                    or not isinstance(basis.get("note"), str) or not basis["note"].strip()):
+                errors.append("[reader] 默认制作依据必须明确指向现役 production_only 规则并说明实际范围")
+        elif not isinstance(receipt.get("user_no_content_review"), str) or not receipt["user_no_content_review"].strip():
+            errors.append("[reader] 生产交付缺默认制作依据或用户明确指令；不得补造取消审核授权")
     chapters = data.get("chapters")
     rows = receipt.get("chapters")
     if not isinstance(chapters, list) or not chapters or not isinstance(rows, list) or not rows:
