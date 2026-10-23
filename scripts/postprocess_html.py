@@ -413,11 +413,25 @@ def clean_filename(name: str) -> str:
     return name
 
 def run_zhconvert(file_path: str):
-    """調用 zhconvert 進行台灣繁體中文轉換"""
+    """調用 zhconvert 進行台灣繁體中文轉換（自動遮罩 base64 圖片以防 API 壅塞超時）"""
     if not os.path.exists(ZHCONVERT_PATH):
         print(f"[!] 警告：未找到 zhconvert 腳本路徑 {ZHCONVERT_PATH}，略過 zhconvert 調用。")
         return
-    print(f"[*] 正在調用 zhconvert 進行繁體台灣在地化轉換: {file_path}")
+
+    base64_map = {}
+    with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+        content = f.read()
+
+    def repl(m):
+        key = f"__DATA_IMG_PLACEHOLDER_{len(base64_map)}__"
+        base64_map[key] = m.group(0)
+        return key
+
+    masked_content = re.sub(r'data:image/[a-zA-Z0-9\+\/=;,\-_%]+', repl, content)
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(masked_content)
+
+    print(f"[*] 正在調用 zhconvert 進行繁體台灣在地化轉換 (已遮罩 {len(base64_map)} 個大型圖片字串): {file_path}")
     cmd = [sys.executable, ZHCONVERT_PATH, file_path, "--mode", "Taiwan", "--overwrite"]
     try:
         res = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', check=True)
@@ -425,6 +439,20 @@ def run_zhconvert(file_path: str):
     except subprocess.CalledProcessError as e:
         print(f"[-] zhconvert 執行失敗: {e.stderr}")
         raise
+    finally:
+        actual_path = file_path
+        if not os.path.exists(actual_path):
+            dir_name = os.path.dirname(file_path)
+            candidates = [os.path.join(dir_name, f) for f in os.listdir(dir_name) if f.endswith('.html')]
+            if candidates:
+                actual_path = max(candidates, key=os.path.getmtime)
+        if os.path.exists(actual_path) and base64_map:
+            with open(actual_path, 'r', encoding='utf-8', errors='ignore') as f:
+                c = f.read()
+            for k, v in base64_map.items():
+                c = c.replace(k, v)
+            with open(actual_path, 'w', encoding='utf-8') as f:
+                f.write(c)
 
 def process_html_content(content: str) -> str:
     """在 HTML 中注入繁體化修復、字型替換、流程圖函式與 CSS 樣式"""
