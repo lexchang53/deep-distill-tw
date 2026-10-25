@@ -472,7 +472,7 @@ def process_html_content(content: str) -> str:
     content = re.sub(r'<span class=["\']tab-sub["\']>.*?</span>', '', content)
     content = re.sub(r'\s*<span class=["\']cb-author-hint["\']>.*?</span>', '', content)
 
-    # 2.2 專業術語台灣在地化修正（級聯 -> 連鎖、養老金 -> 退休金、體制減摩擦工程 -> 降低體制摩擦設計）
+    # 2.2 專業術語台灣在地化修正（級聯 -> 連鎖、養老金 -> 退休金）
     content = content.replace("級聯效應", "連鎖效應")
     content = content.replace("级联效应", "連鎖效應")
     content = content.replace("級聯反應", "連鎖反應")
@@ -483,8 +483,6 @@ def process_html_content(content: str) -> str:
     content = content.replace("养老保险", "退休保險")
     content = content.replace("養老金", "退休金")
     content = content.replace("养老金", "退休金")
-    content = content.replace("體制減摩擦工程", "降低體制摩擦設計")
-    content = content.replace("体制减摩擦工程", "降低體制摩擦設計")
 
     # 2.3 自檢卡片 (.question) 雙欄 Grid 容器自癒（防範漏寫 div 導致 54px 擠壓排版錯位）
     def wrap_question_content(m):
