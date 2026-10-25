@@ -72,14 +72,33 @@ CH_PAT = re.compile(
 
 ---
 
-### 第三步：驗證並提交推送 (Commit & Push)
+### 第三步：非在地化補丁退場機制 (Upstream-First 衝突裁決原則)
+
+本專案奉行「**最小分叉差分 (Minimal Fork Delta)**」與「**上游優先 (Upstream-First)**」原則：
+
+1. **核心保護範疇（本地永久保護）**：
+   僅以下 4 項繁體台灣在地化專屬資產屬於本地永久保留補丁：
+   - `scripts/postprocess_html.py`（專屬繁體在地化外掛）
+   - `scripts/convert_book.py`（繁體章節正則補丁）
+   - `SKILL.md`（Step7 自動繁體化觸發規則與升級指示）
+   - `README.md`（繁體台灣專案說明文件）
+
+2. **通用修復退場裁決（衝突處理與主動回歸鐵律）**：
+   - 若本地曾為上游原生檔案（例如 `templates/page-skeleton.html`、驗證腳本、工藝手冊等）進行過非繁體在地化的結構修復、排版修剪或功能微調（如移除多餘 UI 標籤、修復通用排版 bug 等）；
+   - 當未來同步上游（`git merge upstream/main`）時，若上游官方也對相同或相關區域進行了修正、重構或同類處理：
+     👉 **一律採納上游官方修正，主動放棄並刪除本地分支的同類自製修正（Drop Local Patch & Align Upstream）**。
+   - **目標**：確保本地對上游原生核心的改動永遠維持在最小必要集合；通用問題完全交由官方主幹引領演進，杜絕無謂的本地技術債務與持續合併衝突。
+
+---
+
+### 第四步：驗證並提交推送 (Commit & Push)
 ```bash
 git add .
 git commit -m "chore(upgrade): 同步上游最新版本並套用繁體在地化補丁"
 git push origin main
 ```
 
-### 第四步：自動雲端備份至 P 磁碟 (Auto-Backup to P Drive)
+### 第五步：自動雲端備份至 P 磁碟 (Auto-Backup to P Drive)
 提交並推送到 GitHub 後，**必須自動調用 skills-sync** 進行本機至 P 磁碟的鏡像同步，確保多台電腦無縫銜接：
 ```powershell
 powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.gemini\config\skills\skills-sync\sync-skills.ps1" -Mode Backup -SkillName "deep-distill-tw"
