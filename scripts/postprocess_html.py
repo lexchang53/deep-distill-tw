@@ -480,6 +480,16 @@ def process_html_content(content: str) -> str:
     content = content.replace("級聯", "連鎖")
     content = content.replace("级联", "連鎖")
 
+    # 2.3 自檢卡片 (.question) 雙欄 Grid 容器自癒（防範漏寫 div 導致 54px 擠壓排版錯位）
+    def wrap_question_content(m):
+        attr = m.group(1)
+        inner = m.group(2).strip()
+        if re.match(r"^<(?:h[1-6]|p|span|a)\b", inner, re.IGNORECASE):
+            return f'<article class="question"{attr}>\n        <div>\n          {inner}\n        </div>\n      </article>'
+        return m.group(0)
+
+    content = re.sub(r'<article class="question"([^>]*)>(.*?)</article>', wrap_question_content, content, flags=re.S)
+
     # 3. 替換繁體系統字型族列 (SC -> TC)
     font_replacements = [
         ('"PingFang SC"', '"PingFang TC"'),
