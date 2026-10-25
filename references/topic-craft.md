@@ -178,6 +178,8 @@
 ```
 - **降级**:<3 部→不生成;整块搜空→ `external_debate` null(该板块整块隐藏,但分类地图/分歧矩阵/维度对照表作书内事实照发)。工具链按 `enrich.md §3.4` 路由表选一个引擎(中文观点→AnySearch;要原话段落→doubao_search;英文→Tavily;内置 WebSearch 仅末位回退),一次失败即换、禁重试轰炸,外证须可点击 URL。
 
+外部更新被实际采用时，除链接外，沿用项目已有来源记录说明材料类型、发表与研究发生时间、实际读取范围、适用对象和核查日期；只读官方介绍或作者稿，不写成阅读全文报告或核过正式刊载版。政策建议、横断面关联和干预试验分别解释，不能用指南替代效果证据。新材料另作编者更新并回到相关书内章段，不替历史作者补写对新技术的立场。这是新增外部材料的使用边界，不扩大为全书事实复审；现役 `external_debate` schema 与可选性不变，具体记录和跳转由项目消费者承接。
+
 ## 7. 每书页「主题入口卡」(page-skeleton)
 
 每成员书蒸馏页顶部加一张卡:`本书属于 {topic} 主题聚合(共 {N} 本 · {school_name}派)→ 查看主题全景`,链到 `../topics/{topic_slug}/topic.html`。**降级**:该主题 <3 部已蒸 或 无 `topics/{topic_slug}/topic.json` → 整卡不渲染(单书页不受影响)。SLOT 名 `SLOT:TOPIC-ENTRY`,class `.topic-entry`,子元素前缀 `te-*`(对称 AUTHOR-ENTRY 的 `ae-*` / J-VIEWS-ENTRY 的 `ve-*`)。
