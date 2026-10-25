@@ -468,6 +468,10 @@ def process_html_content(content: str) -> str:
     content = content.replace("'已读 '", "'已讀 '")
     content = content.replace('"已读 "', '"已讀 "')
 
+    # 2.1 移除頂部導航列 .tab-sub 附屬小字與作者欄 .cb-author-hint 標示
+    content = re.sub(r'<span class=["\']tab-sub["\']>.*?</span>', '', content)
+    content = re.sub(r'\s*<span class=["\']cb-author-hint["\']>.*?</span>', '', content)
+
     # 3. 替換繁體系統字型族列 (SC -> TC)
     font_replacements = [
         ('"PingFang SC"', '"PingFang TC"'),
