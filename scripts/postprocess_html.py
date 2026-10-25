@@ -472,6 +472,14 @@ def process_html_content(content: str) -> str:
     content = re.sub(r'<span class=["\']tab-sub["\']>.*?</span>', '', content)
     content = re.sub(r'\s*<span class=["\']cb-author-hint["\']>.*?</span>', '', content)
 
+    # 2.2 專業術語台灣在地化修正（級聯 -> 連鎖）
+    content = content.replace("級聯效應", "連鎖效應")
+    content = content.replace("级联效应", "連鎖效應")
+    content = content.replace("級聯反應", "連鎖反應")
+    content = content.replace("级联反应", "連鎖反應")
+    content = content.replace("級聯", "連鎖")
+    content = content.replace("级联", "連鎖")
+
     # 3. 替換繁體系統字型族列 (SC -> TC)
     font_replacements = [
         ('"PingFang SC"', '"PingFang TC"'),
