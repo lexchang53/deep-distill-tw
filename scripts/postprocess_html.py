@@ -494,6 +494,35 @@ def process_html_content(content: str) -> str:
 
     content = re.sub(r'<article class="question"([^>]*)>(.*?)</article>', wrap_question_content, content, flags=re.S)
 
+    # 2.4 板尾與章尾 CTA 導航按鈕去口語化與全形冒號修訂
+    cta_replacements = [
+        ("下一步:進入逐章精讀 →", "下一步：逐章精讀 →"),
+        ("下一步:进入逐章精读 →", "下一步：逐章精讀 →"),
+        ("下一步:進入逐章精讀", "下一步：逐章精讀 →"),
+        ("下一步:进入逐章精读", "下一步：逐章精讀 →"),
+        ("下一步:看看該信幾分 →", "下一步：批判與評價 →"),
+        ("下一步:看看该信几分 →", "下一步：批判與評價 →"),
+        ("下一步:看看該信幾分", "下一步：批判與評價 →"),
+        ("下一步:看看该信几分", "下一步：批判與評價 →"),
+        ("下一步:讀完這麼用 →", "下一步：行動清單 →"),
+        ("下一步:读完这么用 →", "下一步：行動清單 →"),
+        ("下一步:讀完這麼用", "下一步：行動清單 →"),
+        ("下一步:读完这么用", "下一步：行動清單 →"),
+        ("下一步:接著讀什麼 →", "下一步：延伸閱讀 →"),
+        ("下一步:接着读什么 →", "下一步：延伸閱讀 →"),
+        ("下一步:接著讀什麼", "下一步：延伸閱讀 →"),
+        ("下一步:接着读什么", "下一步：延伸閱讀 →"),
+        ("前往批判與評價 →", "下一步：批判與評價 →"),
+        ("t.textContent = '這書該信幾分?';", "t.textContent = '下一步：批判與評價 →';"),
+        ("t.textContent = '这书该信几分?';", "t.textContent = '下一步：批判與評價 →';"),
+        ("t.textContent = '這書該信幾分？';", "t.textContent = '下一步：批判與評價 →';"),
+        ("t.textContent = '这书该信几分？';", "t.textContent = '下一步：批判與評價 →';"),
+        ("m.textContent = '→ 批判與評價';", "m.textContent = '檢驗理論邊界與學界爭鳴';"),
+        ("m.textContent = '→ 批判与评价';", "m.textContent = '檢驗理論邊界與學界爭鳴';"),
+    ]
+    for old_cta, new_cta in cta_replacements:
+        content = content.replace(old_cta, new_cta)
+
     # 3. 替換繁體系統字型族列 (SC -> TC)
     font_replacements = [
         ('"PingFang SC"', '"PingFang TC"'),
