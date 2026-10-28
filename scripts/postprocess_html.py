@@ -304,6 +304,10 @@ RESPONSIVE_SKETCH_JS = """function initSketch(){
 
 ENHANCED_CUSTOM_CSS = """
 /* ===== 響應式與排版修復 CSS ===== */
+.section-lead {
+  max-width: 52em !important;
+  text-wrap: pretty;
+}
 .napkin-sketch {
   margin: 6px 0 24px;
   padding: 16px 14px 12px;
@@ -461,10 +465,21 @@ def process_html_content(content: str) -> str:
     if not re.search(r'<html[^>]*lang=', content):
         content = re.sub(r'<html', '<html lang="zh-Hant-TW"', content, count=1)
 
-    # 2. 修正 CSS 偽元素與字串
-    content = content.replace('content: "怎么读:";', 'content: "怎麼讀:";')
-    content = content.replace('content:"怎么读:";', 'content:"怎麼讀:";')
-    content = content.replace('怎么读:', '怎麼讀:')
+    # 2. 修正 CSS 偽元素與字串（包含「怎麼讀：」改為標準中文全形冒號）
+    content = content.replace('content: "怎么读:";', 'content: "怎麼讀：";')
+    content = content.replace('content:"怎么读:";', 'content:"怎麼讀：";')
+    content = content.replace('content: "怎麼讀:";', 'content: "怎麼讀：";')
+    content = content.replace('content:"怎麼讀:";', 'content:"怎麼讀：";')
+    content = content.replace("怎么读:", "怎麼讀：")
+    content = content.replace("怎麼讀:", "怎麼讀：")
+
+    # 2.0 清理 formula-read 內文被手動加入的「怎麼讀：」前綴（防範與 CSS ::before 產生雙重重複）
+    content = re.sub(
+        r'(<p\s+class=["\']formula-read["\']>)\s*(?:<strong[^>]*>)?\s*(?:怎麼讀|怎么读)\s*[：:]\s*(?:</strong>)?\s*',
+        r'\1',
+        content,
+        flags=re.I
+    )
     content = content.replace("'已读 '", "'已讀 '")
     content = content.replace('"已读 "', '"已讀 "')
 
@@ -483,6 +498,9 @@ def process_html_content(content: str) -> str:
     content = content.replace("养老保险", "退休保險")
     content = content.replace("養老金", "退休金")
     content = content.replace("养老金", "退休金")
+    # 防範 zhconvert 將「點解」誤判為粵語「為什麼」導致「觀點解碼」變「觀為什麼碼」
+    content = content.replace("觀為什麼", "觀點解")
+    content = content.replace("观为什么", "觀點解")
 
     # 2.3 自檢卡片 (.question) 雙欄 Grid 容器自癒（防範漏寫 div 導致 54px 擠壓排版錯位）
     def wrap_question_content(m):
